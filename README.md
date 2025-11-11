@@ -10,7 +10,7 @@ Giorgio Piras (University of Cagliari), Raffaele Mura (University of Cagliari), 
 ## Language models encode refusal as a manifold captured by multiple, closely related directions.
 
 <div align="center">
-  <img src="media/dirs_2D_split_llama2-7b_layer_13_mix.pdf" alt="" width="100%"/>
+  <img src="media/dirs_2D_split_llama2-7b_layer_13_mix.png" alt="" width="100%"/>
 </div>
 
 We show that Large Language Models (LLMs) do not encode refusal as a single direction, but as a manifold captured by multiple, closely related directions. To this end, we bring Self-Organizing Maps (SOMs) back to life and map the refusal manifold. We do that by training SOMs on the harmful prompts' representations, and build directions on the centroids found by the SOMs. 
