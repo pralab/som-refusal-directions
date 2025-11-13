@@ -1,4 +1,7 @@
+[![Generic badge](https://img.shields.io/badge/AAAI-2026-blue.svg)](https://aaai.org/conference/aaai/aaai-26/)
 [![arXiv](https://img.shields.io/badge/arXiv-2511.08379-b31b1b.svg)](https://arxiv.org/pdf/2511.08379)
+[![Generic badge](https://img.shields.io/badge/Library-Pytorch-green.svg)](https://pytorch.org/)
+
 
 # SOM Directions are Better than One: Multi-Directional Refusal Suppression in Language Models
 
