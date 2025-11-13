@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd 
+distribution.html
+*.png 
+*.pt
+*.out
+*.json
+runs
+*.sh 
+*.txt
+*.html
+waste

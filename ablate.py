@@ -1,7 +1,7 @@
 import os
 import torch
 from models.language_models import Llama2_7b, Llama3_8b, Llama2_13b, Qwen_7b, Qwen_14b, Qwen2_3b, Qwen2_7b, Mistral7B_RR, Zephyr_R2D2, Gemma2_9b
-from utils.ortho_utils import orthogonalize_weights
+from utils.ablation_utils import ablate_weights
 from config import Config
 from directions_ablation import generate_and_save_hookfree_completions
 import argparse
@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     for idx, sing_dir in enumerate(multi_dirs):
         aux_name += '_'+str(args.dir_ids[idx])
-        orthogonalize_weights(model, sing_dir)      
+        ablate_weights(model, sing_dir)
     
     # completions name
     aux_name = aux_name+'_'+extract_direction_prefix(args.directions_path)

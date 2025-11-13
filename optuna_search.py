@@ -13,7 +13,7 @@ import torch
 from optuna.distributions import IntDistribution
 
 from models.language_models import Llama2_7b, Llama3_8b, Qwen_7b, Qwen_14b, Qwen2_3b, Qwen2_7b, Mistral7B_RR, Zephyr_R2D2, Llama2_13b, Gemma2_9b
-from utils.ortho_utils import orthogonalize_weights
+from utils.ablation_utils import ablate_weights
 from directions_ablation import generate_and_save_hookfree_completions
 from config import Config
 from eval_jailbreaks import evaluate_jailbreak
@@ -124,11 +124,11 @@ def evaluate_attack(
     local_aux = f"{aux_name}_{dataset_name}_{'_'.join(map(str, dirs))}"
     print(f">> evaluating dirs {dirs}")
 
-    ortho_dirs = torch.load(directions_path)
+    ablation_dirs = torch.load(directions_path)
     aux_name = f"weights_raw_dirs_{extract_direction_prefix(directions_path)}"
     print(">> ablating directions")
     for d in dirs:
-        orthogonalize_weights(llm, ortho_dirs[d])
+        ablate_weights(llm, ablation_dirs[d])
 
 
     completions = generate_and_save_hookfree_completions(

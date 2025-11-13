@@ -1,7 +1,7 @@
 import functools
 import os
 import torch
-from utils.ortho_utils import orthogonalize_weights, get_orthogonalized_matrix
+from utils.ablation_utils import ablate_weights, get_ablated_matrix
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, GenerationConfig
 from typing import Optional
 from fastchat.model import get_conversation_template
@@ -35,8 +35,8 @@ class LanguageModel(ABC):
     def _get_mlp_modules(self):
         return torch.nn.ModuleList([block_module.mlp for block_module in self.model_block_modules])
 
-    def _get_orthogonalization_mod_fn(self, direction):
-        return functools.partial(orthogonalize_weights, direction=direction)
+    def _get_ablation_mod_fn(self, direction):
+        return functools.partial(ablate_weights, direction=direction)
 
     def load_model(self):
         if self.model is None or self.tokenizer is None:
@@ -245,7 +245,7 @@ class LanguageModel(ABC):
         return self.model.get_input_embeddings().weight
     
     @abstractmethod
-    def orthogonalize_weights(self, direction: torch.Tensor):
+    def ablate_weights(self, direction: torch.Tensor):
         pass
 
 class Llama2_7b(LanguageModel):
@@ -287,15 +287,14 @@ class Llama2_7b(LanguageModel):
     def _get_eoi_toks(self):
         return [self.tokenizer.eos_token_id]
      
-    def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+    def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
 
 class Llama2_13b(Llama2_7b):
     def __init__(self, model_name: str = "meta-llama/Llama-2-13b-chat-hf", system_prompt=llama_sys, device='cuda', quantization_config=None):
@@ -315,15 +314,14 @@ class Llama2_13b(Llama2_7b):
         self.hidden_dimension = 5120
         self.num_layer = 40
 
-    def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+    def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
 
 class Llama3_8b(LanguageModel):
     
@@ -356,15 +354,14 @@ class Llama3_8b(LanguageModel):
     def _get_eoi_toks(self):
         return [self.tokenizer.eos_token_id]
     
-    def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+    def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
 
 class Qwen_7b(LanguageModel):
     """A class to manage the 'Qwen/Qwen-7B-Chat' model."""
@@ -418,14 +415,13 @@ class Qwen_7b(LanguageModel):
 
         return hidden_states
     
-    def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.transformer.wte.weight.data = get_orthogonalized_matrix(self.model.transformer.wte.weight.data, direction)
+    def ablate_weights(self, direction: torch.Tensor):
+        self.model.transformer.wte.weight.data = get_ablated_matrix(self.model.transformer.wte.weight.data, direction)
 
         for block in self.model.transformer.h:
-            block.attn.c_proj.weight.data = get_orthogonalized_matrix(block.attn.c_proj.weight.data.T, direction).T
-            block.mlp.c_proj.weight.data = get_orthogonalized_matrix(block.mlp.c_proj.weight.data.T, direction).T
-        print("✓ Weights orthogonalized.")
+            block.attn.c_proj.weight.data = get_ablated_matrix(block.attn.c_proj.weight.data.T, direction).T
+            block.mlp.c_proj.weight.data = get_ablated_matrix(block.mlp.c_proj.weight.data.T, direction).T
+        print("✓ Weights ablated.")
 
 
 class Qwen_14b(Qwen_7b):
@@ -435,14 +431,13 @@ class Qwen_14b(Qwen_7b):
         self.hidden_dimension = 5120
         self.num_layer = 40
         
-    def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.transformer.wte.weight.data = get_orthogonalized_matrix(self.model.transformer.wte.weight.data, direction)
+    def ablate_weights(self, direction: torch.Tensor):
+        self.model.transformer.wte.weight.data = get_ablated_matrix(self.model.transformer.wte.weight.data, direction)
 
         for block in self.model.transformer.h:
-            block.attn.c_proj.weight.data = get_orthogonalized_matrix(block.attn.c_proj.weight.data.T, direction).T
-            block.mlp.c_proj.weight.data = get_orthogonalized_matrix(block.mlp.c_proj.weight.data.T, direction).T 
-        print("✓ Weights orthogonalized.")
+            block.attn.c_proj.weight.data = get_ablated_matrix(block.attn.c_proj.weight.data.T, direction).T
+            block.mlp.c_proj.weight.data = get_ablated_matrix(block.mlp.c_proj.weight.data.T, direction).T 
+        print("✓ Weights ablated.")
     
 
 
@@ -468,15 +463,14 @@ class Mistral7B_RR(LanguageModel):
 
     return formatted_prompt
 
-   def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+   def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
    
 
    
@@ -517,15 +511,14 @@ class Zephyr_R2D2(LanguageModel):
         else:
             return f"<|user|>\n{prompt}</s>\n<|assistant|>"
 
-    def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+    def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
    
 
 class Qwen2_3b(LanguageModel):
@@ -552,15 +545,14 @@ class Qwen2_3b(LanguageModel):
 
     return formatted_prompt
 
-   def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+   def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
 
 class Qwen2_7b(LanguageModel):
     
@@ -587,15 +579,14 @@ class Qwen2_7b(LanguageModel):
 
     return formatted_prompt
 
-   def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+   def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")
    
 
 class Gemma2_9b(LanguageModel):
@@ -620,12 +611,11 @@ class Gemma2_9b(LanguageModel):
 
     return formatted_prompt
 
-   def orthogonalize_weights(self, direction: torch.Tensor):
-        print("→ Orthogonalizing weights...")
-        self.model.model.embed_tokens.weight.data = get_orthogonalized_matrix(self.model.model.embed_tokens.weight.data, direction)
+   def ablate_weights(self, direction: torch.Tensor):
+        self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
 
         for block in self.model.model.layers:
-            block.self_attn.o_proj.weight.data = get_orthogonalized_matrix(block.self_attn.o_proj.weight.data.T, direction).T
-            block.mlp.down_proj.weight.data = get_orthogonalized_matrix(block.mlp.down_proj.weight.data.T, direction).T 
+            block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
+            block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights orthogonalized.")
+        print("✓ Weights ablated.")

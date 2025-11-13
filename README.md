@@ -13,7 +13,7 @@ Giorgio Piras (University of Cagliari), Raffaele Mura (University of Cagliari), 
   <img src="media/dirs_2D_split_llama2-7b_layer_13_mix.png" alt="" width="75%"/>
 </div>
 
-We show that Large Language Models (LLMs) do not encode refusal as a single direction, but as a manifold captured by multiple, closely related directions. To this end, we bring Self-Organizing Maps (SOMs) back to life and map the refusal manifold. We do that by training a SOM on the harmful prompts' representations, and build directions on the resulting centroids found by the SOMs. 
+We show that Large Language Models (LLMs) better encode refusal as a manifold, captured by multiple, closely related directions. To this end, we repurpose Self-Organizing Maps (SOMs) and map the refusal manifold. We do that by training SOMs on the harmful prompts' representations, and build the directions on the resulting centroids found by the SOMs (i.e., the weights of their neurons). 
 
 ## Approach overview
 
@@ -24,13 +24,13 @@ We show that Large Language Models (LLMs) do not encode refusal as a single dire
 We start from a contrastive dataset made of both harmless and harmful prompts, and extract the internal representations from the LLM's latent space. Then, we first compute the centroid of harmless prompts. For the harmful representations, instead, we train a SOM and obtain multiple centroids/SOM neurons (e.g., 16 centroids with a 4x4 SOM) mapping the refusal manifold. We build multiple directions by subtracting the harmless centroid from each SOM neuron. We finally run Bayesian Optimization to find the best set of `k` directions and ablate the model accordingly. 
 
 ## Mechanistic Analysis 
-Our work was largely inspired by [this paper](https://arxiv.org/pdf/2406.11717) and [this blog](https://transformer-circuits.pub/2024/july-update/index.html). Their insights led us to question whether refusal in LLMs could be encoded through multiple directions, and how. This led us to use Self-Organizing Maps, which have turned out to be extremely powerful at mapping the underlying manifold (they can be used for any kind of underlying LLM concept!):
+Our work was largely inspired by [this paper](https://arxiv.org/pdf/2406.11717) and [this blog](https://transformer-circuits.pub/2024/july-update/index.html). Their insights have inspired us to question whether refusal in LLMs could be encoded through multiple directions, and how. This led us to use Self-Organizing Maps, which have turned out to be extremely powerful at mapping the underlying manifold (they can be used for any kind of LLM concept and related manifold!):
 
 <div align="center">
   <img src="media/llama2-7b_layer13_grid.png" alt="" width="50%"/>
 </div>
 
-After building the multiple directions, which are much more effective than a single one but can surpass also specialized jailbreaks, we analyzed their similarities. We discovered that the found directions are closely related in terms of cosine similarity: 
+After building the multiple directions, which are much more effective than a single one and can surpass also specialized jailbreaks, we analyzed their similarity. We discovered that the found directions are closely related in terms of cosine similarity: 
 
 <div align="center">
   <img src="media/llama2-7b_layer13_confusion.png" alt="" width="50%"/>
@@ -80,7 +80,7 @@ python optuna_search.py --directions_path [path/to/directions] --model_name [mod
 Finally, to evaluate the model ablated with the best directions on the test set, you can run the evaluation on the test set specifing the ids of the best directions:
 
 ```bash 
-python orthogonalize.py --directions_path [path/to/directions] --model_name [model_name] --dir_ids [0, 1, 2]
+python ablate.py --directions_path [path/to/directions] --model_name [model_name] --dir_ids [0 1 2]
 ```
 and then evaluate the completion with the HarmBench Judge:
 ```bash 
