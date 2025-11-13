@@ -1,8 +1,3 @@
-[![Generic badge](https://img.shields.io/badge/AAAI-2026-blue.svg)](https://aaai.org/conference/aaai/aaai-26/)
-[![arXiv](https://img.shields.io/badge/arXiv-2511.08379-b31b1b.svg)](https://arxiv.org/pdf/2511.08379)
-[![Generic badge](https://img.shields.io/badge/Library-Pytorch-green.svg)](https://pytorch.org/)
-
-
 # SOM Directions are Better than One: Multi-Directional Refusal Suppression in Language Models
 
 Refusal refers to the functional behavior enabling safety-aligned language models to reject harmful or unethical prompts. Following the growing scientific interest in mechanistic interpretability, recent work encoded refusal behavior as a single direction in the model’s latent space; e.g., computed as the difference between the centroids of harmful and harmless prompt representations. However, emerging evidence suggests that concepts in LLMs often appear to be encoded as a low-dimensional manifold embedded in the high-dimensional latent space. Motivated by these findings, we propose a novel method leveraging Self-Organizing Maps (SOMs) to extract multiple refusal directions. To this end, we first prove that SOMs generalize the prior work's difference-in-means technique. We then train SOMs on harmful prompt representations to identify multiple neurons. By subtracting the centroid of harmless representations from each neuron, we derive a set of multiple directions expressing the refusal concept. We validate our method on an extensive experimental setup, demonstrating that ablating multiple directions from models' internals outperforms not only the single-direction baseline but also specialized jailbreak algorithms, leading to an effective suppression of refusal. Finally, we conclude by analyzing the mechanistic implications of our approach. 
@@ -96,7 +91,7 @@ This code was also based on the [amazing work by Andy Arditi.](https://arxiv.org
 
 
 ## Contact
-Feel free to contact us about anything related to our benchmark by creating an issue, a pull request or by email at `giorgio.piras@unica.it`.
+Feel free to contact us about anything related to our benchmark by creating an issue, a pull request or by email at `giorgio.piras@unica.it` or `raffaele.mura@unica.it`.
 
 ## Acknowledgements
 This work has been partially supported 
