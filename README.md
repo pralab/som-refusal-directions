@@ -12,7 +12,7 @@ Giorgio Piras (University of Cagliari), Raffaele Mura (University of Cagliari), 
 ## Language models encode refusal as a manifold captured by multiple, closely related directions.
 
 <div align="center">
-  <img src="media/dirs_2D_split_llama2-7b_layer_13_mix.png" alt="" width="100%"/>
+  <img src="media/dirs_2D_split_llama2-7b_layer_13_mix.png" alt="" width="75%"/>
 </div>
 
 We show that Large Language Models (LLMs) do not encode refusal as a single direction, but as a manifold captured by multiple, closely related directions. To this end, we bring Self-Organizing Maps (SOMs) back to life and map the refusal manifold. We do that by training a SOM on the harmful prompts' representations, and build directions on the resulting centroids found by the SOMs. 
@@ -26,22 +26,22 @@ We show that Large Language Models (LLMs) do not encode refusal as a single dire
 We start from a contrastive dataset made of both harmless and harmful prompts, and extract the internal representations from the LLM's latent space. Then, we first compute the centroid of harmless prompts. For the harmful representations, instead, we train a SOM and obtain multiple centroids/SOM neurons (e.g., 16 centroids with a 4x4 SOM) mapping the refusal manifold. We build multiple directions by subtracting the harmless centroid from each SOM neuron. We finally run Bayesian Optimization to find the best set of `k` directions and ablate the model accordingly. 
 
 ## Mechanistic Analysis 
-Our work was largely inspired by [this paper](https://arxiv.org/pdf/2406.11717) and (this blog)[https://transformer-circuits.pub/2024/july-update/index.html]. Their insights led us to question whether refusal in LLMs could be encoded through multiple directions, and how. This led us to use Self-Organizing Maps, which have turned out to be extremely powerful at mapping the underlying manifold (they can be used for any kind of underlying LLM concept!):
+Our work was largely inspired by [this paper](https://arxiv.org/pdf/2406.11717) and [this blog](https://transformer-circuits.pub/2024/july-update/index.html). Their insights led us to question whether refusal in LLMs could be encoded through multiple directions, and how. This led us to use Self-Organizing Maps, which have turned out to be extremely powerful at mapping the underlying manifold (they can be used for any kind of underlying LLM concept!):
 
 <div align="center">
-  <img src="media/llama2-7b_layer13_grid.png" alt="" width="100%"/>
+  <img src="media/llama2-7b_layer13_grid.png" alt="" width="50%"/>
 </div>
 
 After building the multiple directions, which are much more effective than a single one but can surpass also specialized jailbreaks, we analyzed their similarities. We discovered that the found directions are closely related in terms of cosine similarity: 
 
 <div align="center">
-  <img src="media/llama2-7b_layer13_confusion.png" alt="" width="100%"/>
+  <img src="media/llama2-7b_layer13_confusion.png" alt="" width="50%"/>
 </div>
  
 Finally, we questioned what was the effect of ablating multiple directions in the models' representations. It turns out that, as we ablate more directions and the Attack Success Rate grows, the cluster of harmful prompts is affected by two concurrent effects: (i) getting closer to the harmless distributions, and (ii) becoming more and more compact (we show that this is strongly correlated with the attack success rate across all models!): 
 
 <div align="center">
-  <img src="media/llama2-7b_mix_layer13_3d_compare.png" alt="" width="100%"/>
+  <img src="media/llama2-7b_mix_layer13_3d_compare_mds.png" alt="" width="100%"/>
 </div>
 
 [Full paper link.](https://arxiv.org/pdf/2511.08379) 
@@ -106,7 +106,7 @@ and by project [FISA-2023-00128](https://serics.eu/) funded by the MUR program â
 <img src="media/SERICS.png" alt="serics" style="width:100px;"/> &nbsp;&nbsp; 
 <img src="media/sec4AI4sec.png" alt="sec4ai4sec" style="width:70px;"/> &nbsp;&nbsp; 
 <img src="media/elsa.jpg" alt="elsa" style="width:70px;"/> &nbsp;&nbsp;
-<img src="media/FAIR.jpg" alt="FAIR" style="width:70px;"/> &nbsp;&nbsp;
+<img src="media/FAIR.png" alt="FAIR" style="width:70px;"/> &nbsp;&nbsp;
 <img src="media/coevolution.png" alt="coevolution" style="width:100px;"/>
 <img src="media/fisa.png" alt="fisa" style="width:150px;"/>
 <img src="media/FundedbytheEU.png" alt="LInf" style="width:150px;"/>
