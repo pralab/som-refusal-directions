@@ -100,16 +100,16 @@ Feel free to contact us about anything related to our benchmark by creating an i
 
 ## Acknowledgements
 This work has been partially supported 
-by the European Union’s Horizon Europe Research and Innovation Programme under the project [Sec4AI4Sec - Cybersecurity for AI-Augmented Systems](https://www.sec4ai4sec-project.eu), grant agreement No 101120393; 
 by the European Union’s Horizon Europe Research and Innovation Programme under the project [ELSA – European Lighthouse on Secure and Safe AI](https://elsa-ai.eu), grant agreement No. 101070617; 
+by the European Union’s Horizon Europe Research and Innovation Programme under the project [Sec4AI4Sec - Cybersecurity for AI-Augmented Systems](https://www.sec4ai4sec-project.eu), grant agreement No 101120393; 
 by the European Union’s Horizon Europe Research and Innovation Programme under the project [CoEvolution - A COMPREHENSIVE TRUSTWORTHY FRAMEWORK FOR CONNECTED MACHINE LEARNING AND SECURE INTERCONNECTED AI SOLUTIONS](https://coevolution-project.eu/), grant agreement No. 101168560; 
 by project [SERICS](https://serics.eu/) (PE00000014) and [FAIR](https://fondazione-fair.it/hub/) (PE00000013) under the NRRP MUR program funded by the EU - NGEU; 
 and by project [FISA-2023-00128](https://serics.eu/) funded by the MUR program “Fondo italiano per le scienze applicate”. 
 
-<img src="media/SERICS.png" alt="serics" style="width:250px;"/> &nbsp;&nbsp; 
-<img src="media/sec4AI4sec.png" alt="sec4ai4sec" style="width:100px;"/> &nbsp;&nbsp; 
 <img src="media/elsa.jpg" alt="elsa" style="width:100px;"/> &nbsp;&nbsp;
-<img src="media/FAIR.png" alt="FAIR" style="width:180px;"/> &nbsp;&nbsp;
-<img src="media/coevolution.png" alt="coevolution" style="width:100px;"/>
-<img src="media/fisa.png" alt="fisa" style="width:100px;"/>
-<img src="media/FundedbytheEU.png" alt="LInf" style="width:250px;"/>
+<img src="media/sec4AI4sec.png" alt="sec4ai4sec" style="width:120px;"/> &nbsp;&nbsp; 
+<img src="media/coevolution.png" alt="coevolution" style="width:200px;"/>
+<img src="media/SERICS.png" alt="serics" style="width:300px;"/> &nbsp;&nbsp; 
+<img src="media/FAIR.png" alt="FAIR" style="width:200px;"/> &nbsp;&nbsp;
+<img src="media/fisa.png" alt="fisa" style="width:200px;"/>
+<img src="media/FundedbytheEU.png" alt="LInf" style="width:300px;"/>
