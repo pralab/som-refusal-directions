@@ -106,10 +106,10 @@ by the European Union’s Horizon Europe Research and Innovation Programme under
 by project [SERICS](https://serics.eu/) (PE00000014) and [FAIR](https://fondazione-fair.it/hub/) (PE00000013) under the NRRP MUR program funded by the EU - NGEU; 
 and by project [FISA-2023-00128](https://serics.eu/) funded by the MUR program “Fondo italiano per le scienze applicate”. 
 
-<img src="media/SERICS.png" alt="serics" style="width:150px;"/> &nbsp;&nbsp; 
+<img src="media/SERICS.png" alt="serics" style="width:250px;"/> &nbsp;&nbsp; 
 <img src="media/sec4AI4sec.png" alt="sec4ai4sec" style="width:100px;"/> &nbsp;&nbsp; 
 <img src="media/elsa.jpg" alt="elsa" style="width:100px;"/> &nbsp;&nbsp;
-<img src="media/FAIR.png" alt="FAIR" style="width:150px;"/> &nbsp;&nbsp;
+<img src="media/FAIR.png" alt="FAIR" style="width:180px;"/> &nbsp;&nbsp;
 <img src="media/coevolution.png" alt="coevolution" style="width:100px;"/>
 <img src="media/fisa.png" alt="fisa" style="width:100px;"/>
-<img src="media/FundedbytheEU.png" alt="LInf" style="width:200px;"/>
+<img src="media/FundedbytheEU.png" alt="LInf" style="width:250px;"/>
