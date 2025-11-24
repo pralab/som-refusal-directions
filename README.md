@@ -106,6 +106,6 @@ and by project [FISA-2023-00128](https://serics.eu/) funded by the MUR program â
 <img src="media/coevolution.png" alt="coevolution" style="width:170px;"/>
 <img src="media/SERICS.png" alt="serics" style="width:330px;"/> &nbsp;&nbsp; 
 <img src="media/FAIR.png" alt="FAIR" style="width:200px;"/> &nbsp;&nbsp;
-<img src="media/SAFER.png" alt="FAIR" style="width:100px;"/> &nbsp;&nbsp;
+<img src="media/SAFER.png" alt="safer" style="width:200px;"/> &nbsp;&nbsp;
 <img src="media/fisa.png" alt="fisa" style="width:170px;"/>
 <img src="media/FundedbytheEU.png" alt="LInf" style="width:300px;"/>
