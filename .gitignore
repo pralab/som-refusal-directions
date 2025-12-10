@@ -6,7 +6,6 @@ distribution.html
 *.png 
 *.pt
 *.out
-runs
 *.sh 
 *.txt
 *.html

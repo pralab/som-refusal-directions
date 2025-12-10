@@ -3,7 +3,7 @@ from huggingface_hub import login
 from datasets import load_dataset
 from tqdm import tqdm
 import os
-from models.language_models import Llama2_7b, Llama3_8b, Llama2_13b, Qwen_7b, Qwen_14b, Qwen2_3b, Qwen2_7b, Mistral7B_RR, Zephyr_R2D2, Gemma2_9b
+from models.load_models import load_model
 import argparse
 
 def get_args():
@@ -54,22 +54,6 @@ def load_and_prepare_datasets():
     return sb, al
   
 
-def get_model(model_name, device):
-    models = {
-        'llama2-7b': Llama2_7b,
-        'llama3-8b': Llama3_8b,
-        'llama2-13b': Llama2_13b,
-        'qwen-7b': Qwen_7b,
-        'qwen-14b': Qwen_14b,
-        'qwen2-3b': Qwen2_3b,
-        'qwen2-7b': Qwen2_7b,
-        'mistral-7b-rr': Mistral7B_RR,
-        'r2d2': Zephyr_R2D2,
-        'gemma2-9b': Gemma2_9b
-    }
-    print(f"[DEBUG] Initializing model: {model_name} on device: {device}")
-    return models[model_name](device=device) #, quantization_config="8bit")
-
 def convert(data, model, generate, token_pos, verbose=False):
 
     batch_size = len(data)
@@ -101,7 +85,7 @@ def convert_samples(
 
     """
     print(device)
-    model = get_model(model_name, device=device)
+    model = load_model(model_name, device=device)
 
     output_dir = f'./dataset/representations/{model_name}/'
     if generate:
