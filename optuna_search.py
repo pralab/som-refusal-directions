@@ -12,7 +12,7 @@ import optuna
 import torch
 from optuna.distributions import IntDistribution
 
-from models.language_models import Llama2_7b, Llama3_8b, Qwen_7b, Qwen_14b, Qwen2_3b, Qwen2_7b, Mistral7B_RR, Zephyr_R2D2, Llama2_13b, Gemma2_9b
+from models.load_models import load_model
 from utils.ablation_utils import ablate_weights
 from directions_ablation import generate_and_save_hookfree_completions
 from config import Config
@@ -27,21 +27,6 @@ def extract_direction_prefix(path: str) -> str:
     if not m:
         raise ValueError(f"Cannot parse prefix from {path}")
     return m.group(1)
-
-def get_model(model_name, device):
-    models = {
-        'llama2-7b': Llama2_7b,
-        'llama3-8b': Llama3_8b,
-        'llama2-13b': Llama2_13b,
-        'qwen-7b': Qwen_7b,
-        'qwen-14b': Qwen_14b,
-        'qwen2-3b': Qwen2_3b,
-        'qwen2-7b': Qwen2_7b,
-        'mistral-7b-rr': Mistral7B_RR,
-        'r2d2': Zephyr_R2D2,
-        'gemma2-9b': Gemma2_9b
-    }
-    return models[model_name](device=device)
 
 
 # --------------------------------------------------------------------------- #
@@ -118,7 +103,7 @@ def evaluate_attack(
     aux_name: str,
     eval_path: str,
 ) -> float:
-    llm = get_model(model_name, device)
+    llm = load_model(model_name, device)
     cfg = Config(model_alias=model_name, model_path=model_name)
 
     local_aux = f"{aux_name}_{dataset_name}_{'_'.join(map(str, dirs))}"

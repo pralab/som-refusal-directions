@@ -10,7 +10,6 @@ from abc import ABC, abstractmethod
 from tqdm import tqdm
 
 
-
 class LanguageModel(ABC):
     def __init__(self, model_name: str, system_prompt=None, device='cuda', quantization_config=None):
         self.model_name = model_name
@@ -269,6 +268,7 @@ class Llama2_7b(LanguageModel):
         self.template_name = 'llama-2'
         self.hidden_dimension = 4096
         self.num_layer = 32
+        self.refusal_token_id = [306] #'I'
 
     def _get_prompt(self, prompt):
         """
@@ -280,12 +280,12 @@ class Llama2_7b(LanguageModel):
             target (str, optional): The target response to format as assistant's answer
         """
         if self.system_prompt is not None:
-            return f"[INST] <<SYS>>\n{self.system_prompt}\n<</SYS>>\n{prompt} [/INST]"
+            return f"[INST] <<SYS>>\n{self.system_prompt}\n<</SYS>>\n\n{prompt} [/INST] "
         else:
-            return f"[INST] {prompt} [/INST]"
+            return f"[INST] {prompt} [/INST] "
     
     def _get_eoi_toks(self):
-        return [self.tokenizer.eos_token_id]
+        return self.tokenizer.encode("[/INST]", add_special_tokens=False)
      
     def ablate_weights(self, direction: torch.Tensor):
         self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
@@ -313,6 +313,7 @@ class Llama2_13b(Llama2_7b):
         self.template_name = 'llama-2'
         self.hidden_dimension = 5120
         self.num_layer = 40
+        self.refusal_token_id = [306] #'I'
 
     def ablate_weights(self, direction: torch.Tensor):
         self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
@@ -332,6 +333,7 @@ class Llama3_8b(LanguageModel):
         self.template_name = 'llama-2'
         self.hidden_dimension = 4096
         self.num_layer = 32
+        self.refusal_token_id = [40] #'I'
         self.load_model()
 
     def _get_prompt(self, prompt=''):
@@ -371,6 +373,7 @@ class Qwen_7b(LanguageModel):
         self.template_name = 'qwen'
         self.hidden_dimension = 4096  
         self.num_layer = 32  
+        self.refusal_token_id = [40, 2121] #'I', As
         self.load_model()
 
     def _get_prompt(self, prompt=''):
@@ -378,9 +381,9 @@ class Qwen_7b(LanguageModel):
         Formats the prompt using Qwen's chat template.
         """
         if self.system_prompt is not None:
-            formatted_prompt = f"""<|im_start|>system\n{self.system_prompt}<|im_end|>\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant """
+            formatted_prompt = f"""<|im_start|>system\n{self.system_prompt}<|im_end|>\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"""
         else: 
-            formatted_prompt = f"""<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant """
+            formatted_prompt = f"""<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"""
             
         return formatted_prompt
     
@@ -423,13 +426,13 @@ class Qwen_7b(LanguageModel):
             block.mlp.c_proj.weight.data = get_ablated_matrix(block.mlp.c_proj.weight.data.T, direction).T
         print("✓ Weights ablated.")
 
-
 class Qwen_14b(Qwen_7b):
     def __init__(self, model_name: str = "Qwen/Qwen-14B-Chat", system_prompt=qwen_sys, device='cuda', quantization_config=None):
         print(model_name, device, system_prompt)
         super().__init__(model_name, device, system_prompt, quantization_config)
         self.hidden_dimension = 5120
         self.num_layer = 40
+        self.refusal_token_id = [40, 2121] #'I', As
         
     def ablate_weights(self, direction: torch.Tensor):
         self.model.transformer.wte.weight.data = get_ablated_matrix(self.model.transformer.wte.weight.data, direction)
@@ -439,8 +442,6 @@ class Qwen_14b(Qwen_7b):
             block.mlp.c_proj.weight.data = get_ablated_matrix(block.mlp.c_proj.weight.data.T, direction).T 
         print("✓ Weights ablated.")
     
-
-
 class Mistral7B_RR(LanguageModel):
     
     """A class to manage the '#GraySwanAI/Mistral-7B-Instruct-RR'"""
@@ -450,14 +451,13 @@ class Mistral7B_RR(LanguageModel):
         self.template_name = 'mistral'
         self.hidden_dimension = 4096
         self.num_layer = 32
+        self.refusal_token_id = [28737]
         self.load_model()
 
-    def _get_prompt(self, prompt=''):
-        if self.system_prompt is not None:
-            conv_list_dicts = [{"role": "assistant", "content": self.system_prompt}, {"role": "user", "content": prompt}]
-            formatted_prompt = self.tokenizer.apply_chat_template(conv_list_dicts, tokenize=False, add_generation_prompt=True)
-        else:
-            formatted_prompt = self.tokenizer.apply_chat_template([{"role": "user", "content": prompt}], tokenize=False, add_generation_prompt=True)
+    def _get_prompt(self, prompt):
+
+        formatted_prompt = self.tokenizer.apply_chat_template([{"role": "user", "content": prompt}], 
+                                                              tokenize=False, add_generation_prompt=True) #only assistant and user roles
 
         return formatted_prompt
 
@@ -469,8 +469,6 @@ class Mistral7B_RR(LanguageModel):
             block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
         print("✓ Weights ablated.")
-   
-
    
 class Zephyr_R2D2(LanguageModel):
 
@@ -492,6 +490,7 @@ class Zephyr_R2D2(LanguageModel):
         super().__init__(model_name, system_prompt, device, quantization_config)
         self.hidden_dimension = 4096
         self.num_layer = 32
+        self.refusal_token_id = [23166]
         self.load_model()
 
     def _get_prompt(self, prompt: str) -> str:
@@ -505,9 +504,9 @@ class Zephyr_R2D2(LanguageModel):
             str: The formatted prompt.
         """
         if self.system_prompt:
-            return f"<|system|>\n{self.system_prompt}</s>\n<|user|>\n{prompt}</s>\n<|assistant|>"
+            return f"<|system|>\n{self.system_prompt}</s>\n<|user|>\n{prompt}</s>\n<|assistant|> "
         else:
-            return f"<|user|>\n{prompt}</s>\n<|assistant|>"
+            return f"<|user|>\n{prompt}</s>\n<|assistant|> "
 
     def ablate_weights(self, direction: torch.Tensor):
         self.model.model.embed_tokens.weight.data = get_ablated_matrix(self.model.model.embed_tokens.weight.data, direction)
@@ -516,8 +515,7 @@ class Zephyr_R2D2(LanguageModel):
             block.self_attn.o_proj.weight.data = get_ablated_matrix(block.self_attn.o_proj.weight.data.T, direction).T
             block.mlp.down_proj.weight.data = get_ablated_matrix(block.mlp.down_proj.weight.data.T, direction).T 
 
-        print("✓ Weights ablated.")
-   
+        print("✓ Weights ablated.") 
 
 class Qwen2_3b(LanguageModel):
     
@@ -528,7 +526,7 @@ class Qwen2_3b(LanguageModel):
         self.hidden_dimension = 2048
         self.num_layer = 36
         self.load_model()
-        #self.tokenizer.padding_side = 'left'
+        self.refusal_token_id = [40, 2121]
 
     def _get_prompt(self, prompt=''):
 
@@ -560,6 +558,7 @@ class Qwen2_7b(LanguageModel):
         super().__init__(model_name, system_prompt, device, quantization_config)
         self.hidden_dimension = 3584
         self.num_layer = 28
+        self.refusal_token_id = [40, 2121]
         self.load_model()
 
     def _get_prompt(self, prompt=''):
@@ -586,7 +585,6 @@ class Qwen2_7b(LanguageModel):
 
         print("✓ Weights ablated.")
    
-
 class Gemma2_9b(LanguageModel):
     
     """A class to manage the 'google/gemma-2-9b-it' model."""
@@ -595,17 +593,12 @@ class Gemma2_9b(LanguageModel):
         super().__init__(model_name, system_prompt, device, quantization_config)
         self.hidden_dimension = 3584
         self.num_layer = 42
+        self.refusal_token_id = [235285]
         self.load_model()
 
     def _get_prompt(self, prompt=''):
     
-        if self.system_prompt is not None:
-            messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": prompt}]
-            formatted_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        else:
-            formatted_prompt = self.tokenizer.apply_chat_template([{"role": "user", "content": prompt}], tokenize=False, add_generation_prompt=True)
+        formatted_prompt = self.tokenizer.apply_chat_template([{"role": "user", "content": prompt}], tokenize=False, add_generation_prompt=True)
 
         return formatted_prompt
 
