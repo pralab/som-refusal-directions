@@ -67,7 +67,7 @@ To train a simple 4x4 SOM and save the directions, you can run this command:
 ```bash 
 python som_generate_directions.py --som_x 4 --som_y 4 --sigma 0.33 --lr 0.01 --layer [l^*] --model_name [model_name]
 ```
-Checkout the allowed args to see how to get the best out of your SOM! 
+Checkout the allowed args to see how to get the best out of your SOM! To reproduce our results, use the layer indicated in the original paper's Table2 (e.g., 13 for LLama2-7B).
 
 ### 4. BO search 
 After the generation of the directions, you can run a BO search to find the best set of k direction to be ablated:
@@ -86,6 +86,19 @@ and then evaluate the completion with the HarmBench Judge:
 ```bash 
 python eval_jailbreaks.py --completions_path [path/to/completions]
 ```
+To reproduce our papers' results instead, you can directly use these configurations: 
+| Model           | Directions list            | ASR    |
+|-----------------|----------------------------|--------|
+| LLaMA2-7B       | 8-11-4-7-13-6-12            | 59.11% |
+| LLaMA3-8B       | 15-3-0-12-3-11           | 88.05% |
+| Qwen-7B         | 2-7-9-10-0              | 88.05% |
+| Qwen-14B        | 0-7-3-15-11-8            | 91.82% |
+| Qwen2.5-3B      | 2-7-9-14-8             | 93.71% |
+| Qwen2.5-7B      | 10-3-5-2-4-6-13             | 95.97% |
+| Gemma2-9B       | 7-6-15-2-13-3            | 96.27% |
+| Mistral-7B-RR   | 9-5-6-3-1             | 25.79% |
+
+
 
 This code was also based on the [amazing work by Andy Arditi.](https://arxiv.org/pdf/2406.11717)
 
