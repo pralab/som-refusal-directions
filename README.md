@@ -104,7 +104,7 @@ This code was also based on the [amazing work by Andy Arditi.](https://arxiv.org
 
 
 ## Contact
-Feel free to contact us about anything related to our benchmark by creating an issue, a pull request or by email at `giorgio.piras@unica.it` or `raffaele.mura@unica.it`.
+Feel free to contact us about anything related to our work by creating an issue, a pull request or by email at `giorgio.piras@unica.it` or `raffaele.mura@unica.it`.
 
 ## Acknowledgements
 This work has been partially supported 
