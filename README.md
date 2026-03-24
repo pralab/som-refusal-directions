@@ -102,9 +102,23 @@ To reproduce our papers' results instead, you can directly use these configurati
 
 This code was also based on the [amazing work by Andy Arditi.](https://arxiv.org/pdf/2406.11717)
 
+## Reference 
+Please cite this work as: 
+```bibtex 
+@inproceedings{piras_mura_2026som,
+  title={SOM Directions are Better than One: Multi-Directional Refusal Suppression in Language Models},
+  author={Piras, Giorgio and Mura, Raffaele and Brau, Fabio and Oneto, Luca and Roli, Fabio and Biggio, Battista},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={40},
+  number={39},
+  pages={32728--32736},
+  year={2026}
+}
+```
 
 ## Contact
 Feel free to contact us about anything related to our work by creating an issue, a pull request or by email at `giorgio.piras@unica.it` or `raffaele.mura@unica.it`.
+ 
 
 ## Acknowledgements
 This work has been partially supported 
